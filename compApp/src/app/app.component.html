@@ -1,0 +1,58 @@
+<div class="container">
+  <h1>File Comparison Tool</h1>
+
+  <div class="file-upload-container">
+    <!-- File 1 -->
+    <div class="file-upload">
+      <h2>File 1</h2>
+      <input type="file" (change)="onFileChange($event, 1)" />
+      <div *ngIf="headers1.length > 0">
+        <label for="column-select-1">Select column to compare:</label>
+        <select id="column-select-1" [(ngModel)]="selectedColumn1">
+          <option *ngFor="let header of headers1" [value]="header">{{ header }}</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- File 2 -->
+    <div class="file-upload">
+      <h2>File 2</h2>
+      <input type="file" (change)="onFileChange($event, 2)" />
+      <div *ngIf="headers2.length > 0">
+        <label for="column-select-2">Select column to compare:</label>
+        <select id="column-select-2" [(ngModel)]="selectedColumn2">
+          <option *ngFor="let header of headers2" [value]="header">{{ header }}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <button (click)="compareFiles()" [disabled]="!selectedColumn1 || !selectedColumn2">
+    Compare
+  </button>
+
+  <div *ngIf="results.length > 0" class="results-container">
+    <h2>Comparison Results</h2>
+    <button (click)="downloadResults()">Download Results</button>
+    <table>
+      <thead>
+        <tr>
+          <!-- Dynamically generate headers from file 1 -->
+          <th *ngFor="let header of headers1">{{ header }}</th>
+          <!-- Add headers from file 2 -->
+          <th *ngFor="let header of headers2">{{ header }} (Matched)</th>
+          <th>Confidence</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of results">
+          <!-- Data from file 1 -->
+          <td *ngFor="let header of headers1">{{ row.file1Row[header] }}</td>
+          <!-- Data from file 2 -->
+          <td *ngFor="let header of headers2">{{ row.file2Row ? row.file2Row[header] : '' }}</td>
+          <td>{{ row.confidence | percent }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
